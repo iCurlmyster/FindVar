@@ -10,7 +10,7 @@ This project will more than likely evolve as I learn about new things that I wou
 There is a simple FindVar command and function to call.
 
 ```
-:call FindVar()
+:FindVar
 ```
 
 By default each search is recursive, displays the line number the word was found on, and is case-insensitive.
@@ -25,7 +25,7 @@ Arguments:
 
 Example usage:
 ```
-:call FindVar("~/Documents/project", "parseArguments", "*.hpp,*cpp")
+:FindVar "~/Documents/project", "parseArguments", "*.hpp,*cpp"
 ```
 
 This call will start searching for the word `parseArguments` in the `~/Documents/project` directory but only display results where the file was a `.hpp` or `.cpp` file.
