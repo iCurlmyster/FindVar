@@ -55,6 +55,8 @@ function! findvar#FindVar(...)
     " through)
     if a:0 > 2
         let l:file_matching = s:gen_includes(a:3)
+    else
+        let l:file_matching = s:gen_includes('')
     endif
 
     " create command 
