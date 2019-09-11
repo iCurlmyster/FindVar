@@ -39,7 +39,7 @@ fun! s:execute_grep(vtf, fm, sd)
 endfun
 " - display findvar results to user in separate window
 fun! s:write_results_to_window(results)
-    let l:name = '__FindVar_Results__'
+    let l:name = '__FindVar_Results__.findvar'
     " check if buffer already exists
     if bufwinnr(l:name) == -1
         " create new split view with given name
@@ -52,6 +52,8 @@ fun! s:write_results_to_window(results)
     normal! ggdG
     " don't prompt to save the buffer
     setlocal buftype=nofile
+    " delete buffer when hidden
+    setlocal bufhidden=delete
     " append results from 0
     call append(0, a:results)
 endfun
