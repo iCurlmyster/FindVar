@@ -7,17 +7,23 @@ This project will more than likely evolve as I learn about new things that I wou
 
 ## Usage
 
-There is a simple FindVar command and function to call.
+There are four commands:
+- `FindVar`
+- `FindVarWithWord`
+- `FindVarInFiles`
+- `FindVarOpenFile`
 
-```
-:FindVar
-```
+### FindVar
 
-By default each search is recursive, displays the line number the word was found on, and is case-insensitive.
+FindVar is the main command to use, which accepts 3 optional arguments.
+
+This command performs a grep command to look for the usage of a given word in a given directory against all files or certain given types of files.
+
+By default each grep search is recursive, displays the line number the word was found on, and is case-insensitive.
 
 *see Global Variables to see how to configure this*
 
-### Arguments
+#### Arguments
 The function takes up to three optional arguments.
 
 Arguments:
@@ -36,6 +42,35 @@ Default values for the arguments:
 - The directory is set to the level that VIM was started at
 - The word will be the current word the is under the cursor in VIM
 - Searches through all files
+
+### FindVarWithWord
+
+FindVarWithWord is just like FindVar except it only accepts 2 optional arguments (which are the last 2 arguments in FindVar)
+
+Example usage:
+```
+:FindVarWithWord "parseArguments", "*.hpp,*.cpp"
+```
+
+### FindVarInFiles
+
+FindVarInFiles is just like FindVarWithWord and FindVar except it only accepts 1 optional argument (which is the last argument in FindVar)
+
+Example Usage:
+```
+:FindVarInFiles "*.hpp,*.cpp"
+```
+
+### FindVarOpenFile
+
+FindVarOpenFile command will grab and open a file at the given line number from the current line the cursor is on in the results buffer created from FindVar (FindVarWithWord and FindVarInFiles).
+
+*this command only works inside the FindVar results buffer*
+
+Example usage:
+```
+:FindVarOpenFile
+```
 
 ### Global Variables
 
