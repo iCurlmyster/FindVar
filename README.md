@@ -78,11 +78,13 @@ There are three global variables that can be customized in a user's `.vimrc` fil
 - `g:findvar_base_cmds` The base flags used in the grep command. Default value is `-rni`
 - `g:findvar_extra_cmds` Extra flags that a user would want to tag on. Default is nothing
 - `g:findvar_default_file_matching` Default string with comma separated GLOB patterns for matching files. Default is nothing. This value always gets added if set.
+- `g:findvar_default_dir_matching` Default string with comma separated GLOB patterns for excluding directories. Default is nothing. This value always gets added if set.
 
 Example usage:
-```
+```vimscript
 let g:findvar_base_cmds = '-rni'
 let g:findvar_extra_cmds = '-E'
 let g:findvar_default_file_matching = '*.hpp,*.cpp'
+let g:findvar_default_dir_matching = 'bin,node_modules'
 ```
 
