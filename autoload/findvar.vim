@@ -12,6 +12,10 @@ if !exists("g:findvar_default_file_matching")
     let g:findvar_default_file_matching = ''
 endif
 
+if !exists("g:findvar_default_dir_exclude")
+    let g:findvar_default_dir_exclude = ''
+endif
+
 " - private functions
 " - local function to gen include arguments for grep command
 fun! s:gen_includes(fm)
@@ -20,30 +24,56 @@ fun! s:gen_includes(fm)
     let l:file_matching_list = split(l:file_matching, ',')
     let l:file_matching = ''
     for mat in l:file_matching_list
-        let l:file_matching = l:file_matching . ' --include ' . mat
+        let l:file_matching = l:file_matching . ' --include=' . mat
     endfor
     " grab includes from global default value
     let l:file_matching_list = split(g:findvar_default_file_matching, ',')
     for mat in l:file_matching_list
-        let l:file_matching = l:file_matching . ' --include ' . mat
+        let l:file_matching = l:file_matching . ' --include=' . mat
     endfor
     return l:file_matching
 endfun
+fun! s:exclude_dirs(dm)
+    let l:dir_matching = a:dm
+    " grab excludes from arguments
+    let dir_matching_list = split(l:dir_matching, ',')
+    let l:dir_matching = ''
+    for dir in l:dir_matching_list
+        let l:dir_matching = l:dir_matching . ' --exclude-dir=' . dir
+    endfor
+    " grab excludes from global default value
+    let l:dir_matching_list = split(g:findvar_default_dir_exclude, ',')
+    for dir in l:dir_matching_list
+        let l:dir_matching = l:dir_matching . ' --exclude-dir=' . dir
+    endfor
+    return l:dir_matching
+endfun
 " - perform the grep operation
-fun! s:execute_grep(vtf, fm, sd)
+"   @param vtf Variable to find
+"   @param fm File matching includes
+"   @param sd Starting Directory
+"   @param exd Directories to exclude
+fun! s:execute_grep(vtf, fm, sd, exd)
     " create command 
-    let l:cmd = 'grep ' . g:findvar_base_cmds . ' ' . a:vtf . a:fm . ' ' . g:findvar_extra_cmds . ' ' . a:sd
+    let l:cmd = 'grep ' . g:findvar_base_cmds . ' ' . a:vtf . a:fm . a:exd . ' ' . g:findvar_extra_cmds . ' ' . a:sd
     " grab results from executing command
     silent let l:results = systemlist(l:cmd)
     return l:results
 endfun
 " - display findvar results to user in separate window
-fun! s:write_results_to_window(results)
+" - second param is window direction. options are 'v' (vertical split) or
+"   anything else for horizontal split
+fun! s:write_results_to_window(results, wind)
     let l:name = '__FindVar_Results__.findvar'
     " check if buffer already exists
     if bufwinnr(l:name) == -1
-        " create new split view with given name
-        execute 'vsplit ' . l:name
+        if a:wind == 'v'
+            " create new split view with given name
+            execute 'vsplit ' . l:name
+        else 
+            " create new split view with given name
+            execute 'split ' . l:name
+        endif
     else
         " move focus to the window 
         execute bufwinnr(l:name) . 'wincmd w'
@@ -60,6 +90,15 @@ fun! s:write_results_to_window(results)
     normal! gg
 endfun
 
+" - Clean the given wind
+" - returns 'v' if wind is 'v' otherwise ''
+fun! s:wind_clean(wind)
+    if a:wind == 'v'
+        return 'v'
+    endif
+    return ''
+endfun
+
 " - public functions
 " - Execute the grep command and display results in a new window
 function! findvar#FindVar(...)
@@ -67,9 +106,17 @@ function! findvar#FindVar(...)
     let l:starting_directory = ''
     let l:var_to_find = ''
     let l:file_matching = ''
+    " window direction. default is vertical split
+    let l:wind = 'h'
     " look to see if a starting directory was given
     if a:0 > 0
-        let l:starting_directory = a:1
+        if a:1 == ''
+            let l:starting_directory = getcwd()
+        else
+            let l:starting_directory = a:1
+        endif
+    else
+        let l:starting_driectory = getcwd()
     endif
     " look to see if a word to find was given
     if a:0 > 1
@@ -86,8 +133,14 @@ function! findvar#FindVar(...)
     else
         let l:file_matching = s:gen_includes('')
     endif
-    let l:results = s:execute_grep(l:var_to_find, l:file_matching, l:starting_directory)
-    call s:write_results_to_window(l:results)
+    if a:0 > 3
+        let l:wind = s:wind_clean(a:4)
+    endif
+    " currently not accepting exclude dirs on the fly
+    " TODO change this to handle that
+    let l:exclude_dirs = s:exclude_dirs('')
+    let l:results = s:execute_grep(l:var_to_find, l:file_matching, l:starting_directory, l:exclude_dirs)
+    call s:write_results_to_window(l:results, l:wind)
     " reset syntax
     execute "syntax on"
     " add current searched word to be syntax highlighted
@@ -99,7 +152,7 @@ function! findvar#FindVar(...)
     " nmap <buffer> <expr> <CR> Enter_key()
 
     " go back to previous window
-    execute "wincmd p"
+    " execute "wincmd p"
 endfunction
 " - Execute the grep command and display results in a new window
 function! findvar#FindVarWithWord(...)
