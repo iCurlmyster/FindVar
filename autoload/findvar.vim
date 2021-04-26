@@ -170,7 +170,7 @@ function! findvar#FindVarWithWord(...)
     " look to see if a pattern for matching certain files was given
     " through)
     if a:0 > 1
-        call findvar#FindVar('', l:var_to_find, a:2)
+        call findvar#FindVar('', l:var_to_find, a:2, a:3)
     else
         call findvar#FindVar('', l:var_to_find)
     endif
@@ -180,7 +180,7 @@ function! findvar#FindVarInFiles(...)
     " look to see if a pattern for matching certain files was given
     " through)
     if a:0 > 0
-        call findvar#FindVar('', expand('<cword>'), a:1)
+        call findvar#FindVar('', expand('<cword>'), a:1, a:2)
     else
         call findvar#FindVar('', expand('<cword>'))
     endif
