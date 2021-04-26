@@ -194,12 +194,13 @@ fun! findvar#OpenFile()
     endif
     " get line under cursor
     let l:line_val = getline('.')
-    let l:line_words = split(l:line_val, ':')
-    if len(l:line_words) < 3
+    let l:line_words = split(l:line_val, ':\d\+:')
+    if len(l:line_words) < 2
         return
     endif
+    let l:line_num_match = substitute(matchstr(l:line_val, ":\\d\\+:"), ":", "", "g")
     let l:file_name = l:line_words[0]
-    let l:line_num = str2nr(l:line_words[1])
+    let l:line_num = str2nr(l:line_num_match)
     echom "opening file '" . l:file_name . "' to line '" . l:line_num
     if !filereadable(l:file_name)
         echom "cannot read given file"
