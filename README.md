@@ -30,10 +30,11 @@ Arguments:
 - Base directory to start looking at
 - The word to look through the file(s) for
 - String with comma separated GLOB patterns for matching files
+- Character flag to tell which direction to open the findvars buffer ("v" for vertical, anything else for horizontal)
 
 Example usage:
 ```
-:FindVar "~/Documents/project", "parseArguments", "*.hpp,*cpp"
+:FindVar "~/Documents/project", "parseArguments", "*.hpp,*cpp", "v"
 ```
 
 This call will start searching for the word `parseArguments` in the `~/Documents/project` directory but only display results where the file was a `.hpp` or `.cpp` file.
@@ -42,23 +43,24 @@ Default values for the arguments:
 - The directory is set to the level that VIM was started at
 - The word will be the current word the is under the cursor in VIM
 - Searches through all files
+- "h" opens new buffer horizontally
 
 ### FindVarWithWord
 
-FindVarWithWord is just like FindVar except it only accepts 2 optional arguments (which are the last 2 arguments in FindVar)
+FindVarWithWord is just like FindVar except it only accepts 2 optional arguments (which are the last 3 arguments in FindVar)
 
 Example usage:
 ```
-:FindVarWithWord "parseArguments", "*.hpp,*.cpp"
+:FindVarWithWord "parseArguments", "*.hpp,*.cpp", "v"
 ```
 
 ### FindVarInFiles
 
-FindVarInFiles is just like FindVarWithWord and FindVar except it only accepts 1 optional argument (which is the last argument in FindVar)
+FindVarInFiles is just like FindVarWithWord and FindVar except it only accepts 1 optional argument (which is the last 2 arguments in FindVar)
 
 Example Usage:
 ```
-:FindVarInFiles "*.hpp,*.cpp"
+:FindVarInFiles "*.hpp,*.cpp", "v"
 ```
 
 ### FindVarOpenFile
