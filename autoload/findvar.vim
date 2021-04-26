@@ -186,11 +186,17 @@ function! findvar#FindVarInFiles(...)
     endif
 endfunction
 " Open file from findvar results view when user presses enter
-fun! findvar#OpenFile()
+" @param wind Direction the buffer should open ("v" for vertical, anything
+" else for horizontal
+fun! findvar#OpenFile(...)
     let l:current_file_name = expand('%')
     if l:current_file_name !~ "\.*.findvar"
         echom "not a findvar file"
         return
+    endif
+    let l:wind = "h"
+    if a:0 > 0
+        let l:wind = s:wind_clean(a:1)
     endif
     " get line under cursor
     let l:line_val = getline('.')
@@ -211,8 +217,13 @@ fun! findvar#OpenFile()
         let l:line_num = 0
     endif
     if bufwinnr(l:file_name) == -1
-        " create new split view with given name
-        silent execute "vsplit " . l:file_name
+        if l:wind == 'v'
+            " create new split view with given name
+            silent execute 'vsplit ' . l:file_name
+        else 
+            " create new split view with given name
+            silent execute 'split ' . l:file_name
+        endif
     else
         " move focus to the window 
         silent execute bufwinnr(l:file_name) . 'wincmd w'
